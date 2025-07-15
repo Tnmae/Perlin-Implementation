@@ -33,8 +33,8 @@ void Camera::HandleInputs(GLFWwindow *window, GLfloat sensitivity) {
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     camPos += speed * Up;
   }
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    camPos = speed * -Up;
+  if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+    camPos += speed * -Up;
   }
 
   // MOUSE EVENTS

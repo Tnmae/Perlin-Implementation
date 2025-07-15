@@ -2,10 +2,11 @@
 
 out vec4 FragColor;
 in vec2 texCoords;
+in vec3 position;
 
 uniform sampler2D diffuse0;
 
 void main()
 {
-    FragColor = texture(diffuse0, texCoords);
+    FragColor = vec4((position.y + position.z) / 3, (position.x + position.z) / 3, (position.x + position.y) / 3, 1.0f);
 }

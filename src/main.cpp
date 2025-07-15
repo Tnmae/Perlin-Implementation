@@ -57,7 +57,7 @@ int main() {
 
   Mesh sample_mesh(vertices, indices, textures, shader.shaderProgram);
 
-  Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
+  Camera camera(glm::vec3(-1.0f, 3.0f, 11.0f));
 
   glm::vec3 mesh_pos = glm::vec3(0.0f, 0.0f, -2.0f);
   glm::mat4 model = glm::mat4(1.0f);
