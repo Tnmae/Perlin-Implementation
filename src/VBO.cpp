@@ -1,16 +1,24 @@
 #include "../include/VBO.hpp"
 
-VBO::VBO(GLfloat vertices[], size_t size) {
+Vertex::Vertex(glm::vec3 pos, glm::vec3 color, glm::vec2 texUV,
+               glm::vec3 normal) {
+  Vertex::position = pos;
+  Vertex::color = color;
+  Vertex::texUV = texUV;
+  Vertex::normal = normal;
+};
+
+VBO::VBO(std::vector<Vertex> vertices) {
   glGenBuffers(1, &vbo);
   Bind();
-  BufferData(vertices, size);
+  BufferData(vertices);
 }
 
 void VBO::Bind() { glBindBuffer(GL_ARRAY_BUFFER, vbo); }
 
-void VBO::BufferData(GLfloat vertices[], size_t size) {
-  glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), vertices,
-               GL_STATIC_DRAW);
+void VBO::BufferData(std::vector<Vertex> vertices) {
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
+               vertices.data(), GL_STATIC_DRAW);
 }
 
 void VBO::Unbind() { glBindBuffer(GL_ARRAY_BUFFER, 0); }

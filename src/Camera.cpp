@@ -5,32 +5,36 @@
 Camera::Camera(glm::vec3 camPos) { Camera::camPos = camPos; }
 
 void Camera::updateMatrix(GLfloat nearPlane, GLfloat farPlane) {
-  glm::mat4 camView = glm::lookAt(camPos, camPos + Orientation, Up);
-  glm::mat4 camProj = glm::perspective(
-      glm::radians(45.0f), (float)((float)WIDTH / HEIGHT), nearPlane, farPlane);
 
-  camMatrix = camView * camProj;
+  glm::mat4 camView = glm::mat4(1.0f);
+  glm::mat4 camProj = glm::mat4(1.0f);
+
+  camView = glm::lookAt(camPos, camPos + Orientation, Up);
+  camProj = glm::perspective(
+      glm::radians(45.0f), (float)(float(WIDTH) / HEIGHT), nearPlane, farPlane);
+
+  camMatrix = camProj * camView;
 }
 
 void Camera::HandleInputs(GLFWwindow *window, GLfloat sensitivity) {
   GLfloat speed = 0.1f;
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    camPos -= speed * Orientation;
-  }
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
     camPos += speed * Orientation;
   }
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    camPos -= speed * glm::normalize(glm::cross(Orientation, Up));
-  }
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camPos += speed * -Orientation;
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camPos += speed * -glm::normalize(glm::cross(Orientation, Up));
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
     camPos += speed * glm::normalize(glm::cross(Orientation, Up));
   }
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     camPos += speed * Up;
   }
   if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    camPos -= speed * Up;
+    camPos = speed * -Up;
   }
 
   // MOUSE EVENTS
@@ -60,7 +64,7 @@ void Camera::HandleInputs(GLFWwindow *window, GLfloat sensitivity) {
 
     glfwSetCursorPos(window, ((float)(WIDTH) / 2), ((float)(HEIGHT) / 2));
 
-  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) ==
+  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
              GLFW_RELEASE) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     firstClick = true;

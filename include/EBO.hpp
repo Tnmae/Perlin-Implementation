@@ -3,12 +3,13 @@
 
 #include "../lib/glad/glad.h"
 #include <cstdio>
+#include <vector>
 
 class EBO {
 public:
-  EBO(GLuint indices[], size_t size);
+  EBO(std::vector<GLuint> indices);
   void Bind();
-  void BufferData(GLuint indices[], size_t size);
+  void BufferData(std::vector<GLuint> indices);
   void Draw();
   void Unbind();
   void Delete();

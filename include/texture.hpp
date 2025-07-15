@@ -12,7 +12,8 @@ unsigned char *load_image(std::string path);
 
 class Texture {
 public:
-  Texture(std::string texName);
+  std::string type;
+  Texture(std::string texName, std::string type);
   void TextureData(GLuint shaderProgram, std::string uniform_name, GLuint unit);
   void DrawTexture(GLuint unit);
 

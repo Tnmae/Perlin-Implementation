@@ -15,10 +15,13 @@ unsigned char *load_image(std::string texName, int &width, int &height,
   }
 }
 
-Texture::Texture(std::string texName) {
+Texture::Texture(std::string texName, std::string type) {
+
+  Texture::type = type;
 
   int width, height, channels;
 
+  stbi_set_flip_vertically_on_load(false);
   unsigned char *imgData = load_image(texName, width, height, channels);
 
   glGenTextures(1, &texID);

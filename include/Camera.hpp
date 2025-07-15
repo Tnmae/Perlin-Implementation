@@ -17,7 +17,7 @@
 
 class Camera {
 public:
-  Camera(glm::vec3 cameraPos = {0.0f, 0.0f, 0.0f});
+  Camera(glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f));
   void updateMatrix(GLfloat nearPlane, GLfloat farPlane);
   void HandleInputs(GLFWwindow *window, GLfloat sensitivity);
   void SendMatrix(GLuint shaderProgram, const char *uniform_name);

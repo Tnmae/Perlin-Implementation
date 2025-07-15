@@ -1,5 +1,6 @@
 #include "../include/Camera.hpp"
 #include "../include/EBO.hpp"
+#include "../include/Mesh.hpp"
 #include "../include/VAO.hpp"
 #include "../include/VBO.hpp"
 #include "../include/shader.hpp"
@@ -30,48 +31,69 @@ int main() {
 
   // gladLoadGL();
 
-  GLfloat vertices[] = {-0.5f, -0.5f, 0.0f, 0.0f,  0.0f, 0.0f, 0.5f, 0.0f,
-                        0.5f,  1.0f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
+  std::vector<Vertex> vertices = {
+      Vertex(glm::vec3(-1.5f, -1.5f, 1.5f), glm::vec3(0.0f),
+             glm::vec2(0.0f, 0.0f)),
+      Vertex(glm::vec3(-1.5f, -1.5f, -1.5f), glm::vec3(0.0f),
+             glm::vec2(1.0f, 0.0f)),
+      Vertex(glm::vec3(1.5f, -1.5f, -1.5f), glm::vec3(0.0f),
+             glm::vec2(0.0f, 1.0f)),
+      Vertex(glm::vec3(1.5f, -1.5f, 1.5f), glm::vec3(0.0f),
+             glm::vec2(1.0f, 0.0f)),
+      Vertex{glm::vec3(-1.5f, 1.5f, 1.5f)},
+      Vertex{glm::vec3(-1.5f, 1.5f, -1.5f)},
+      Vertex{glm::vec3(1.5f, 1.5f, -1.5f)},
+      Vertex{glm::vec3(1.5f, 1.5f, 1.5f)}};
 
-  GLuint indices[] = {0, 1, 2};
+  std::vector<GLuint> indices = {0, 1, 2, 0, 2, 3, 0, 4, 7, 0, 7, 3,
+                                 3, 7, 6, 3, 6, 2, 2, 6, 5, 2, 5, 1,
+                                 1, 5, 4, 1, 4, 0, 4, 5, 6, 4, 6, 7};
+
+  std::vector<Texture> textures = {Texture("planks.png", "diffuse")};
 
   glViewport(0, 0, WIDTH, HEIGHT);
 
-  VAO VAO;
-  VBO VBO(vertices, sizeof(vertices) / sizeof(GLfloat));
-  EBO EBO(indices, sizeof(indices) / sizeof(GLuint));
-
-  VAO.VertexArrayData(0, 3, 5, 0);
-  VAO.VertexArrayData(1, 2, 5, 3);
-
-  VAO.Unbind();
-  VBO.Unbind();
-  EBO.Unbind();
-
-  Texture sample("planks.png");
-
   Shader shader("default.vert", "default.frag");
 
-  sample.TextureData(shader.shaderProgram, "texture", 0);
+  Mesh sample_mesh(vertices, indices, textures, shader.shaderProgram);
+
+  Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
+
+  glm::vec3 mesh_pos = glm::vec3(0.0f, 0.0f, -2.0f);
+  glm::mat4 model = glm::mat4(1.0f);
+
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
+  float rotation = 0.5f;
+  double prevTime = glfwGetTime();
 
   while (!glfwWindowShouldClose(gWindow)) {
     glfwPollEvents();
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    double crntTime = glfwGetTime();
+    if (crntTime - prevTime >= 1.0 / 60) {
+      rotation += 0.5;
+      prevTime = crntTime;
+    }
+
+    camera.HandleInputs(gWindow, 0.5f);
+    camera.updateMatrix(0.1f, 100.0f);
 
     shader.Activate();
-    VAO.Bind();
-    glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-    sample.DrawTexture(0);
+    camera.SendMatrix(shader.shaderProgram, "camera_matrix");
+    glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgram, "model"), 1,
+                       GL_FALSE, glm::value_ptr(model));
+    sample_mesh.Draw();
 
     glfwSwapBuffers(gWindow);
   }
 
   glfwDestroyWindow(gWindow);
-  VBO.Delete();
-  VAO.Delete();
-  EBO.Delete();
   shader.Delete();
+  sample_mesh.Delete();
   glfwTerminate();
   return EXIT_SUCCESS;
 }

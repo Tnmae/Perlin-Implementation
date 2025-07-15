@@ -1,13 +1,5 @@
 #include "../include/VAO.hpp"
 
-Vertex::Vertex(glm::vec3 position, glm::vec3 color, glm::vec2 texUV,
-               glm::vec3 normal) {
-  Vertex::position = position;
-  Vertex::color = color;
-  Vertex::texUV = texUV;
-  Vertex::normal = normal;
-}
-
 VAO::VAO() {
   glGenVertexArrays(1, &vao);
   Bind();
