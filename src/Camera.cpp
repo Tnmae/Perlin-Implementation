@@ -17,7 +17,7 @@ void Camera::updateMatrix(GLfloat nearPlane, GLfloat farPlane) {
 }
 
 void Camera::HandleInputs(GLFWwindow *window, GLfloat sensitivity) {
-  GLfloat speed = 0.1f;
+  GLfloat speed = 0.5f;
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     camPos += speed * Orientation;
   }

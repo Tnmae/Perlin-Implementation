@@ -38,9 +38,9 @@ void *loadTerrainData(std::string file_name, size_t &out_size) {
 
 Terrain::Terrain(std::string file_name, GLuint shaderProgram) {
   size_t size;
-  unsigned char *data = (unsigned char *)loadTerrainData(file_name, size);
+  float *data = (float *)loadTerrainData(file_name, size);
   std::cout << "size of height map =" << size << std::endl;
-  int terrain_size = std::sqrt(size);
+  int terrain_size = std::sqrt((float)size / sizeof(float));
   float array2D[terrain_size][terrain_size];
   for (int i = 0; i < terrain_size; i++) {
     for (int j = 0; j < terrain_size; j++) {
@@ -55,7 +55,7 @@ Terrain::Terrain(std::string file_name, GLuint shaderProgram) {
   float initial_z = 0;
   for (int i = 0; i < terrain_size; i++) {
     for (int j = 0; j < terrain_size; j++) {
-      vertices.push_back(Vertex(glm::vec3(initial_x, 1.0f, initial_z),
+      vertices.push_back(Vertex(glm::vec3(initial_x, array2D[i][j], initial_z),
                                 glm::vec3(1.0, 1.0, 1.0)));
       initial_x++;
     }
@@ -80,6 +80,6 @@ Terrain::Terrain(std::string file_name, GLuint shaderProgram) {
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::RenderTerrain() { terrain_mesh->Draw(); }
+void Terrain::RenderTerrain(GLenum mode) { terrain_mesh->Draw(mode); }
 
 void Terrain::Delete() { terrain_mesh->Delete(); }

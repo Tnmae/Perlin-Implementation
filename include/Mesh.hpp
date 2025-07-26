@@ -14,7 +14,7 @@ public:
   Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
        std::vector<Texture> textures, GLuint shaderProgram);
   void SendTextureData(GLuint shaderProgram);
-  void Draw();
+  void Draw(GLenum mode);
   void Delete();
 
 private:

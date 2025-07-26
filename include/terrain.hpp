@@ -16,7 +16,7 @@ void *loadTerrainData(std::string file_name);
 class Terrain {
 public:
   Terrain(std::string file_name, GLuint shaderProgram);
-  void RenderTerrain();
+  void RenderTerrain(GLenum mode);
   void Delete();
 
 private:

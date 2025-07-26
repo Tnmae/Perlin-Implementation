@@ -51,14 +51,14 @@ void Mesh::SendTextureData(GLuint shaderProgram) {
   }
 }
 
-void Mesh::Draw() {
+void Mesh::Draw(GLenum mode) {
   vao.Bind();
 
   for (int i = 0; i < textures.size(); i++) {
     textures[i].DrawTexture(i);
   }
 
-  glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
+  glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Mesh::Delete() { vao.Delete(); }

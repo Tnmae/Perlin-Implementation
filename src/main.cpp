@@ -87,14 +87,14 @@ int main() {
     camera.SendMatrix(shader.shaderProgram, "camera_matrix");
     glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgram, "model"), 1,
                        GL_FALSE, glm::value_ptr(model));
-    sample_mesh.Draw();
+    sample_mesh.Draw(GL_TRIANGLES);
 
     terrainShader.Activate();
     camera.SendMatrix(terrainShader.shaderProgram, "camera_matrix");
     glUniformMatrix4fv(
         glGetUniformLocation(terrainShader.shaderProgram, "model"), 1, GL_FALSE,
         glm::value_ptr(model));
-    newTerrain.RenderTerrain();
+    newTerrain.RenderTerrain(GL_LINES);
 
     glfwSwapBuffers(gWindow);
   }
