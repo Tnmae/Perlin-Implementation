@@ -58,7 +58,7 @@ void Mesh::Draw() {
     textures[i].DrawTexture(i);
   }
 
-  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Mesh::Delete() { vao.Delete(); }

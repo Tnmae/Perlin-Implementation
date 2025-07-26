@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.50)
 
 set(CMAKE_CXX_STANDARD 20)
 
+project(${PROJECT_NAME} LANGUAGE CXX)
+
 include_directories(include)
 
 find_package(PkgConfig REQUIRED)
@@ -12,6 +14,7 @@ project(main)
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_FILES} lib/glad/glad.c)
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -g)
 
 target_include_directories(
   ${PROJECT_NAME}

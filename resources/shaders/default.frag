@@ -1,7 +1,6 @@
 #version 330 core
 
 out vec4 FragColor;
-in vec2 texCoords;
 in vec3 position;
 
 uniform sampler2D diffuse0;

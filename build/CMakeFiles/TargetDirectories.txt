@@ -1,3 +1,0 @@
-/home/tanmay/Documents/cpp/terrain_gen/build/CMakeFiles/main.dir
-/home/tanmay/Documents/cpp/terrain_gen/build/CMakeFiles/edit_cache.dir
-/home/tanmay/Documents/cpp/terrain_gen/build/CMakeFiles/rebuild_cache.dir
