@@ -61,7 +61,9 @@ int main() {
 
   Shader terrainShader("terrain.vert", "terrain.frag");
 
-  Terrain newTerrain("heightmap.save", terrainShader.shaderProgram);
+  Terrain newTerrain;
+
+  newTerrain.InitTerrain("heightmap.save", terrainShader.shaderProgram, 4.0f);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -94,7 +96,7 @@ int main() {
     glUniformMatrix4fv(
         glGetUniformLocation(terrainShader.shaderProgram, "model"), 1, GL_FALSE,
         glm::value_ptr(model));
-    newTerrain.RenderTerrain(GL_LINES);
+    newTerrain.RenderTerrain(GL_POINTS, true);
 
     glfwSwapBuffers(gWindow);
   }

@@ -1,4 +1,5 @@
 #include "../include/terrain.hpp"
+#include <glm/integer.hpp>
 
 void *loadTerrainData(std::string file_name, size_t &out_size) {
   std::string current_path = fs::current_path().string();
@@ -36,17 +37,26 @@ void *loadTerrainData(std::string file_name, size_t &out_size) {
   return p;
 }
 
-Terrain::Terrain(std::string file_name, GLuint shaderProgram) {
+void Terrain::InitTerrain(std::string file_name, GLuint shaderProgram,
+                          float scalingFactor) {
+  Terrain::m_worldScale = scalingFactor;
+
   size_t size;
   float *data = (float *)loadTerrainData(file_name, size);
-  std::cout << "size of height map =" << size << std::endl;
   int terrain_size = std::sqrt((float)size / sizeof(float));
+
+  Terrain::terrain_size = terrain_size;
+
   float array2D[terrain_size][terrain_size];
   for (int i = 0; i < terrain_size; i++) {
     for (int j = 0; j < terrain_size; j++) {
       array2D[i][j] = *(data + i * terrain_size + j);
     }
   }
+
+  Terrain::array2D = &array2D[0][0];
+
+  free(data);
 
   std::vector<Vertex> vertices;
   std::vector<GLuint> indices;
@@ -55,31 +65,53 @@ Terrain::Terrain(std::string file_name, GLuint shaderProgram) {
   float initial_z = 0;
   for (int i = 0; i < terrain_size; i++) {
     for (int j = 0; j < terrain_size; j++) {
-      vertices.push_back(Vertex(glm::vec3(initial_x, array2D[i][j], initial_z),
-                                glm::vec3(1.0, 1.0, 1.0)));
+      vertices.push_back(
+          Vertex(glm::vec3(initial_x * m_worldScale, array2D[i][j],
+                           initial_z * m_worldScale),
+                 glm::vec3(1.0, 1.0, 1.0)));
       initial_x++;
     }
     initial_z++;
     initial_x = 0;
   }
-  std::cout << "size of vertices is = " << vertices.size() << std::endl;
 
   for (int i = 0; i < terrain_size - 1; i++) {
     for (int j = 0; j < terrain_size - 1; j++) {
       indices.push_back(i * terrain_size + j);
       indices.push_back((i + 1) * terrain_size + j);
       indices.push_back(i * terrain_size + j + 1);
-      indices.push_back(i * terrain_size + j + 1);
       indices.push_back((i + 1) * terrain_size + j + 1);
+      indices.push_back(i * terrain_size + j + 1);
       indices.push_back((i + 1) * terrain_size + j);
     }
   }
 
-  std::cout << "size of indices is = " << indices.size() << std::endl;
-
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::RenderTerrain(GLenum mode) { terrain_mesh->Draw(mode); }
+void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
+                                      float minHeight, float maxHeight) {
+  Terrain::terrain_size = terrain_size;
+}
+
+void Terrain::RenderTerrain(GLenum mode, bool wireframe) {
+  if (wireframe) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  } else {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+  terrain_mesh->Draw(mode);
+}
 
 void Terrain::Delete() { terrain_mesh->Delete(); }
+
+void Terrain::printArray2D() {
+  float *ptr = array2D;
+  for (int i = 0; i < terrain_size; i++) {
+    for (int j = 0; j < terrain_size; j++) {
+      std::cout << *ptr << " ";
+      ptr++;
+    }
+    std::cout << "\n";
+  }
+}

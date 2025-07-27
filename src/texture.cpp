@@ -21,7 +21,7 @@ Texture::Texture(std::string texName, std::string type) {
 
   int width, height, channels;
 
-  stbi_set_flip_vertically_on_load(false);
+  stbi_set_flip_vertically_on_load(true);
   unsigned char *imgData = load_image(texName, width, height, channels);
 
   glGenTextures(1, &texID);
