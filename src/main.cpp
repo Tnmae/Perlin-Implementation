@@ -63,7 +63,8 @@ int main() {
 
   Terrain newTerrain;
 
-  newTerrain.InitTerrain("heightmap.save", terrainShader.shaderProgram, 4.0f);
+  newTerrain.FaultFormationTechnique(256, 500, 0.0f, 300.0f, 3.0f,
+                                     terrainShader.shaderProgram, 0.5f);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -96,7 +97,11 @@ int main() {
     glUniformMatrix4fv(
         glGetUniformLocation(terrainShader.shaderProgram, "model"), 1, GL_FALSE,
         glm::value_ptr(model));
-    newTerrain.RenderTerrain(GL_POINTS, true);
+    glUniform1f(glGetUniformLocation(terrainShader.shaderProgram, "gMaxHeight"),
+                newTerrain.m_maxHeight);
+    glUniform1f(glGetUniformLocation(terrainShader.shaderProgram, "gMinHeight"),
+                newTerrain.m_minHeight);
+    newTerrain.RenderTerrain(GL_TRIANGLES, true);
 
     glfwSwapBuffers(gWindow);
   }
