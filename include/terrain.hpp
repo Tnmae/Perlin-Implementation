@@ -3,7 +3,9 @@
 
 #include "../lib/glad/glad.h"
 #include "Mesh.hpp"
+#include "base_utils.hpp"
 #include "glm/glm.hpp"
+#include "sample.hpp"
 #include "texture.hpp"
 #include <GLFW/glfw3.h>
 #include <filesystem>
@@ -25,7 +27,13 @@ public:
                                float minHeight, float maxHeight,
                                float scalingFactor, GLuint shaderProgram,
                                double Filter);
-  void MidpointDisplacementTechnique(int terrain_size);
+  void MidpointDisplacementTechnique(int terrain_size, double roughness,
+                                     float minHeight, float maxHeight,
+                                     GLuint shaderProgram);
+
+  void PerlinGeneration(int m_terrainSize, float minHeight, float maxHeight,
+                        GLuint shaderProgram);
+
   float m_maxHeight;
   float m_minHeight;
   void RenderTerrain(GLenum mode, bool wireframe = false);

@@ -43,7 +43,7 @@ void Filter::FIRFilter(float *array2D, int terrain_size, double Filter) {
     for (int j = 1; j < terrain_size; j++) {
       *(array2D + i * terrain_size + j) =
           *(array2D + i * terrain_size + j - 1) * Filter +
-          (1 - Filter) * *(array2D + i * terrain_size + j);
+          (1.0 - Filter) * *(array2D + i * terrain_size + j);
     }
   }
 
@@ -51,8 +51,8 @@ void Filter::FIRFilter(float *array2D, int terrain_size, double Filter) {
   for (int i = 0; i < terrain_size; i++) {
     for (int j = terrain_size - 2; j >= 0; j--) {
       *(array2D + i * terrain_size + j) =
-          *(array2D + i * terrain_size + j - 2) * Filter +
-          (1 - Filter) * *(array2D + i * terrain_size + j);
+          *(array2D + i * terrain_size + j + 1) * Filter +
+          (1.0 - Filter) * *(array2D + i * terrain_size + j);
     }
   }
 
@@ -61,16 +61,16 @@ void Filter::FIRFilter(float *array2D, int terrain_size, double Filter) {
     for (int i = 1; i < terrain_size; i++) {
       *(array2D + i * terrain_size + j) =
           *(array2D + i * terrain_size + j - 1) * Filter +
-          (1 - Filter) * *(array2D + i * terrain_size + j);
+          (1.0 - Filter) * *(array2D + i * terrain_size + j);
     }
   }
 
   // bottom to top
   for (int j = 0; j < terrain_size; j++) {
-    for (int i = 1; i < terrain_size; i++) {
+    for (int i = terrain_size - 2; i >= 0; i--) {
       *(array2D + i * terrain_size + j) =
-          *(array2D + i * terrain_size + j - 1) * Filter +
-          (1 - Filter) * *(array2D + i * terrain_size + j);
+          *(array2D + i * terrain_size + j + 1) * Filter +
+          (1.0 - Filter) * *(array2D + i * terrain_size + j);
     }
   }
 }
@@ -241,7 +241,78 @@ void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::MidpointDisplacementTechnique(int terrain_size) {}
+void Terrain::MidpointDisplacementTechnique(int terrain_size, double roughness,
+                                            float minHeight, float maxHeight,
+                                            GLuint shaderProgram) {
+  Terrain::terrain_size = terrain_size;
+  int m_rectSize = terrain_size;
+  float m_heightReduce = std::pow(m_rectSize, roughness);
+  int curHeight = terrain_size;
+
+  float array2D[terrain_size][terrain_size];
+
+  for (int i = 0; i < terrain_size; i++) {
+    for (int j = 0; j < terrain_size; j++) {
+      array2D[i][j] = 0.0f;
+    }
+  }
+
+  while (m_rectSize > 0) {
+
+    Utility::diamondStep(&array2D[0][0], terrain_size, m_rectSize, curHeight);
+
+    // Utility::squareStep(&array2D[0][0], terrain_size, m_rectSize, curHeight);
+
+    m_rectSize = m_rectSize >> 1;
+    curHeight *= m_heightReduce;
+  }
+
+  float max = array2D[0][0];
+  float min = array2D[0][0];
+  for (int i = 0; i < terrain_size; i++) {
+    for (int j = 0; j < terrain_size; j++) {
+      if (array2D[i][j] > max) {
+        max = array2D[i][j];
+      }
+      if (array2D[i][j] < min) {
+        min = array2D[i][j];
+      }
+    }
+  }
+
+  float min_max_del = max - min;
+  float delta_height = maxHeight - minHeight;
+
+  for (int i = 0; i < terrain_size; i++) {
+    for (int j = 0; j < terrain_size; j++) {
+      array2D[i][j] =
+          ((array2D[i][j] - min) / min_max_del) * delta_height + minHeight;
+    }
+  }
+
+  std::vector<Vertex> vertices;
+  std::vector<GLuint> indices;
+
+  for (int i = 0; i < terrain_size; i++) {
+    for (int j = 0; j < terrain_size; j++) {
+      vertices.push_back(
+          Vertex(glm::vec3(j, 1.0f, i), glm ::vec3(1.0f, 1.0f, 1.0f)));
+    }
+  }
+
+  for (int i = 0; i < terrain_size - 1; i++) {
+    for (int j = 0; j < terrain_size - 1; j++) {
+      indices.push_back(i * terrain_size + j);
+      indices.push_back((i + 1) * terrain_size + j);
+      indices.push_back(i * terrain_size + j + 1);
+      indices.push_back(i * terrain_size + j + 1);
+      indices.push_back((i + 1) * terrain_size + j);
+      indices.push_back((i + 1) * terrain_size + j + 1);
+    }
+  }
+
+  terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
+}
 
 void Terrain::RenderTerrain(GLenum mode, bool wireframe) {
   if (wireframe) {
@@ -250,6 +321,54 @@ void Terrain::RenderTerrain(GLenum mode, bool wireframe) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
   terrain_mesh->Draw(mode);
+}
+
+void Terrain::PerlinGeneration(int m_terrainSize, float minHeight,
+                               float maxHeight, GLuint shaderProgram) {
+  Terrain::terrain_size = m_terrainSize;
+  Terrain::m_minHeight = minHeight;
+  Terrain::m_maxHeight = maxHeight;
+
+  makePermutation();
+
+  float array2D[m_terrainSize][m_terrainSize];
+
+  for (int i = 0; i < m_terrainSize; i++) {
+    float x = i * 0.01f;
+    for (int j = 0; j < m_terrainSize; j++) {
+      float y = j * 0.01f;
+      array2D[i][j] = Noise2D(x, y);
+    }
+  }
+
+  Terrain::array2D = &array2D[0][0];
+
+  std::vector<Vertex> vertices;
+  std::vector<GLuint> indices;
+
+  for (int i = 0; i < m_terrainSize; i++) {
+    for (int j = 0; j < m_terrainSize; j++) {
+      vertices.push_back(
+          Vertex(glm::vec3(j,
+                           minHeight + ((1.0f + array2D[i][j]) / 2.0f) *
+                                           (maxHeight - minHeight),
+                           -i),
+                 glm::vec3(1.0f, 1.0f, 1.0f)));
+    }
+  }
+
+  for (int i = 0; i < m_terrainSize - 1; i++) {
+    for (int j = 0; j < m_terrainSize - 1; j++) {
+      indices.push_back(i * m_terrainSize + j);
+      indices.push_back((i + 1) * m_terrainSize + j);
+      indices.push_back(i * m_terrainSize + j + 1);
+      indices.push_back(i * m_terrainSize + j + 1);
+      indices.push_back((i + 1) * m_terrainSize + j);
+      indices.push_back((i + 1) * m_terrainSize + j + 1);
+    }
+  }
+
+  Terrain::terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
 void Terrain::Delete() { terrain_mesh->Delete(); }
