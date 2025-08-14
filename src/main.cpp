@@ -66,7 +66,7 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.PerlinGeneration(1000, 0.0f, 100.0f, terrainShader.shaderProgram);
+  newTerrain.PerlinGeneration(1000, 0.0f, 50.0f, terrainShader.shaderProgram);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

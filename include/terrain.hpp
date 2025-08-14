@@ -5,7 +5,7 @@
 #include "Mesh.hpp"
 #include "base_utils.hpp"
 #include "glm/glm.hpp"
-#include "sample.hpp"
+#include "noise.hpp"
 #include "texture.hpp"
 #include <GLFW/glfw3.h>
 #include <filesystem>
