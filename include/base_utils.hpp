@@ -8,19 +8,28 @@
 namespace Utility {
 void initArray2D(int *array2D);
 
-template <typename type> void initArray2D(int *array2D, type value);
+template <typename type> void initArray2D(type *array2D, int size) {
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; i < size; j++) {
+      *(array2D + i * size + j) = (type)0.0f;
+    }
+  }
+}
 
-template <typename type> void setValueArray2D(int *array2D, type value);
+void getMinMaxValue(float *array2D, int size, float &min, float &max);
 
-void getMinMaxValue(int *array2D);
-
-void PopulateBuffers(std::vector<Vertex> vertices, std::vector<GLuint> indices);
+void PopulateBuffers(float *array2D, std::vector<Vertex> &vertices,
+                     std::vector<GLuint> &indices, int size,
+                     float m_worldScale = 1.0f);
 
 void diamondStep(float *array2D, int m_terrainSize, int m_rectSize,
                  float curHeight);
 
 void squareStep(float *array2D, int m_terrainSize, int m_rectSize,
                 float curHeight);
+
+void Normalize(float *array2D, int size, int min, int max, int minHeight,
+               int maxHeight);
 
 }; // namespace Utility
 

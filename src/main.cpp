@@ -66,7 +66,8 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.PerlinGeneration(1000, 0.0f, 50.0f, terrainShader.shaderProgram);
+  newTerrain.PerlinGeneration(1000, 0.0f, 100.0f, 2.0f,
+                              terrainShader.shaderProgram);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -103,7 +104,8 @@ int main() {
                 newTerrain.m_maxHeight);
     glUniform1f(glGetUniformLocation(terrainShader.shaderProgram, "gMinHeight"),
                 newTerrain.m_minHeight);
-    newTerrain.RenderTerrain(GL_TRIANGLES, false);
+    newTerrain.ToggleWireframe(gWindow);
+    newTerrain.RenderTerrain(GL_TRIANGLES);
 
     glfwSwapBuffers(gWindow);
   }

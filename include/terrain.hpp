@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 #include <filesystem>
 #include <fstream>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 
@@ -21,6 +22,8 @@ void FIRFilter(float *array2D, int terrain_size, double Filter);
 
 class Terrain {
 public:
+  float m_maxHeight;
+  float m_minHeight;
   void InitTerrain(std::string file_name, GLuint shaderProgram,
                    float scalingFactor);
   void FaultFormationTechnique(int terrain_size, int Iterations,
@@ -29,14 +32,13 @@ public:
                                double Filter);
   void MidpointDisplacementTechnique(int terrain_size, double roughness,
                                      float minHeight, float maxHeight,
-                                     GLuint shaderProgram);
+                                     float scalingFactor, GLuint shaderProgram);
 
   void PerlinGeneration(int m_terrainSize, float minHeight, float maxHeight,
-                        GLuint shaderProgram);
+                        float scalingFactor, GLuint shaderProgram);
 
-  float m_maxHeight;
-  float m_minHeight;
-  void RenderTerrain(GLenum mode, bool wireframe = false);
+  void ToggleWireframe(GLFWwindow *window);
+  void RenderTerrain(GLenum mode);
   void Delete();
   int getTerrainSize() { return terrain_size; }
   void printArray2D();
@@ -47,6 +49,8 @@ private:
   float m_worldScale = 1.0f;
   int terrain_size;
   float *array2D;
+  GLenum mode = GL_LINE;
+  bool firstClick = true;
 };
 
 #endif /* TERRAIN_HPP */
