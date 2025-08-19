@@ -17,8 +17,10 @@ namespace fs = std::filesystem;
 void *loadTerrainData(std::string file_name);
 
 namespace Filter {
+void ApplyFIRSinglePoint(float *array2D, int terrain_size, int x, int z,
+                         float &prevVal, double Filter);
 void FIRFilter(float *array2D, int terrain_size, double Filter);
-};
+}; // namespace Filter
 
 class Terrain {
 public:
@@ -32,10 +34,12 @@ public:
                                double Filter);
   void MidpointDisplacementTechnique(int terrain_size, double roughness,
                                      float minHeight, float maxHeight,
-                                     float scalingFactor, GLuint shaderProgram);
+                                     float scalingFactor, double Filter,
+                                     GLuint shaderProgram);
 
-  void PerlinGeneration(int m_terrainSize, float minHeight, float maxHeight,
-                        float scalingFactor, GLuint shaderProgram);
+  void FractalPerlinGeneration(int m_terrainSize, float minHeight,
+                               float maxHeight, float scalingFactor,
+                               int numOctaves, GLuint shaderProgram);
 
   void ToggleWireframe(GLFWwindow *window);
   void RenderTerrain(GLenum mode);

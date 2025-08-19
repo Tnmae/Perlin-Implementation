@@ -9,6 +9,9 @@
 #include <GLFW/glfw3.h>
 
 int main() {
+
+  srand(time(0));
+
   if (!glfwInit()) {
     std::cout << "error initializing GLFW " << std::endl;
     std::cout << glGetError() << std::endl;
@@ -66,8 +69,8 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.PerlinGeneration(1000, 0.0f, 100.0f, 2.0f,
-                              terrainShader.shaderProgram);
+  newTerrain.FractalPerlinGeneration(1000, 0.0f, 300.0f, 1.0f, 10,
+                                     terrainShader.shaderProgram);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

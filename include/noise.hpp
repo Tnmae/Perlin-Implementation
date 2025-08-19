@@ -26,9 +26,9 @@ inline float dot(vector2D constantVector, vector2D gradientVector) {
          constantVector.y * gradientVector.y;
 }
 
-inline float fade(float t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+inline double fade(float t) { return t * t * t * (t * (t * 6 - 15) + 10); }
 
-inline float lerp(float t, float u, float v) { return u + t * (v - u); }
+inline double lerp(float t, float u, float v) { return u + t * (v - u); }
 
 float Noise2D(float x, float y);
 

@@ -10,7 +10,7 @@ void initArray2D(int *array2D);
 
 template <typename type> void initArray2D(type *array2D, int size) {
   for (int i = 0; i < size; i++) {
-    for (int j = 0; i < size; j++) {
+    for (int j = 0; j < size; j++) {
       *(array2D + i * size + j) = (type)0.0f;
     }
   }
@@ -28,8 +28,8 @@ void diamondStep(float *array2D, int m_terrainSize, int m_rectSize,
 void squareStep(float *array2D, int m_terrainSize, int m_rectSize,
                 float curHeight);
 
-void Normalize(float *array2D, int size, int min, int max, int minHeight,
-               int maxHeight);
+void Normalize(float *array2D, int size, float min, float max, float minHeight,
+               float maxHeight);
 
 }; // namespace Utility
 

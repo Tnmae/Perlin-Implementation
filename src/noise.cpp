@@ -30,13 +30,13 @@ void makePermutation() {
 vector2D getConstantVector(int valueFromPerm) {
   int h = valueFromPerm & 3;
   if (!h) {
-    return vector2D{1.0f, 1.0f};
+    return vector2D{0.70710678f, 0.70710678f};
   } else if (h == 1) {
-    return vector2D{1.0f, -1.0f};
+    return vector2D{0.70710678f, -0.70710678f};
   } else if (h == 2) {
-    return vector2D{-1.0f, 1.0f};
+    return vector2D{-0.70710678f, 0.70710678f};
   } else {
-    return vector2D{-1.0f, -1.0f};
+    return vector2D{-0.70710678f, -0.70710678f};
   }
 }
 
@@ -66,6 +66,7 @@ float Noise2D(float x, float y) {
   float v = fade(yf);
 
   return (lerp(u, lerp(v, dotBottomLeft, dotTopLeft),
-               lerp(v, dotBottomRight, dotTopRight))) *
-         1.41421356f;
+               lerp(v, dotBottomRight, dotTopRight)));
 }
+
+float valueNoise2D(float x, float y) { return 0.0f; }
