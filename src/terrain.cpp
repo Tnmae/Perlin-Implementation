@@ -89,14 +89,14 @@ void Terrain::InitTerrain(std::string file_name, GLuint shaderProgram,
 
   Terrain::terrain_size = terrain_size;
 
-  float array2D[terrain_size][terrain_size];
+  Terrain::array2D =
+      (float *)malloc(terrain_size * terrain_size * sizeof(float));
+
   for (int i = 0; i < terrain_size; i++) {
     for (int j = 0; j < terrain_size; j++) {
-      array2D[i][j] = *(data + i * terrain_size + j);
+      *(array2D + i * terrain_size + j) = *(data + i * terrain_size + j);
     }
   }
-
-  Terrain::array2D = &array2D[0][0];
 
   free(data);
 
