@@ -11,6 +11,7 @@
 int main() {
 
   srand(time(0));
+  srand48(time(0));
 
   if (!glfwInit()) {
     std::cout << "error initializing GLFW " << std::endl;
@@ -69,8 +70,8 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.FaultFormationTechnique(2000, 800, 0.0f, 400.0f, 1.5f,
-                                     terrainShader.shaderProgram, 0.5f);
+  newTerrain.fBmUsingValueNoise(1500, 0.0f, 300.0f, 1.0f, 6,
+                                terrainShader.shaderProgram);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

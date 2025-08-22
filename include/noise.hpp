@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 
+#define MAX_TABLE_SIZE 256
 #define RANDOM_VALUE ((float)rand() / (float)(RAND_MAX))
 
 typedef struct {
@@ -13,11 +14,15 @@ typedef struct {
 
 extern int permutation[512];
 
+extern double randMap2D[MAX_TABLE_SIZE][MAX_TABLE_SIZE];
+
 void swap(int array[], int idx1, int idx2);
 
 void shuffle(int arrayToShuffle[]);
 
 extern void makePermutation();
+
+extern void initRandMap();
 
 vector2D getConstantVector(int valueFromPerm);
 

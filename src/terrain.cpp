@@ -255,8 +255,7 @@ void Terrain::FractalPerlinGeneration(unsigned int m_terrainSize,
       for (int j = 0; j < m_terrainSize; j++) {
         float y = j * frequency;
         *(array2D + i * m_terrainSize + j) +=
-            delta_height * amplitude * ((float)(1.0f + Noise2D(x, y)) / 2.0f) +
-            minHeight;
+            delta_height * amplitude * ((float)(1.0f + Noise2D(x, y)) / 2.0f);
       }
     }
     amplitude *= 0.5f;
@@ -280,6 +279,57 @@ void Terrain::FractalPerlinGeneration(unsigned int m_terrainSize,
   Terrain::terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
+void Terrain::fBmUsingValueNoise(unsigned int m_terrainSize, float minHeight,
+                                 float maxHeight, float scalingFactor,
+                                 unsigned int numOctaves,
+                                 GLuint shaderProgram) {
+  Terrain::terrain_size = m_terrainSize;
+  Terrain::m_minHeight = minHeight;
+  Terrain::m_maxHeight = maxHeight;
+  Terrain::m_worldScale = scalingFactor;
+
+  initRandMap();
+
+  Terrain::array2D =
+      (float *)malloc(m_terrainSize * m_terrainSize * sizeof(float));
+
+  Utility::initArray2D(Terrain::array2D, m_terrainSize);
+
+  float delta_height = maxHeight - minHeight;
+
+  int curOctave = 0;
+  double amplitude = 1.0f;
+  double frequency = 0.005f;
+
+  while (curOctave < numOctaves) {
+    for (int i = 0; i < m_terrainSize; i++) {
+      float x = i * frequency;
+      for (int j = 0; j < m_terrainSize; j++) {
+        float y = j * frequency;
+        *(array2D + i * m_terrainSize + j) +=
+            delta_height * amplitude * ((valueNoise2D(x, y) * 2) - 1.0f);
+      }
+    }
+    amplitude *= 0.5f;
+    frequency *= 2.0f;
+    curOctave++;
+  }
+
+  float min, max;
+
+  Utility::getMinMaxValue(Terrain::array2D, m_terrainSize, min, max);
+
+  Utility::Normalize(Terrain::array2D, m_terrainSize, min, max, minHeight,
+                     maxHeight);
+
+  std::vector<Vertex> vertices;
+  std::vector<GLuint> indices;
+
+  Utility::PopulateBuffers(Terrain::array2D, vertices, indices, terrain_size,
+                           Terrain::m_worldScale);
+
+  Terrain::terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
+}
 void Terrain::Delete() { terrain_mesh->Delete(); }
 
 void Terrain::RenderTerrain(GLenum mode) {

@@ -2,6 +2,8 @@
 
 int permutation[512];
 
+double randMap2D[MAX_TABLE_SIZE][MAX_TABLE_SIZE];
+
 void swap(int array[], int idx1, int idx2) {
   int temp = array[idx1];
   array[idx1] = array[idx2];
@@ -24,6 +26,14 @@ void makePermutation() {
 
   for (int i = 0; i < 256; i++) {
     permutation[i + 256] = permutation[i];
+  }
+}
+
+void initRandMap() {
+  for (int i = 0; i < MAX_TABLE_SIZE; i++) {
+    for (int j = 0; j < MAX_TABLE_SIZE; j++) {
+      randMap2D[i][j] = drand48();
+    }
   }
 }
 
@@ -72,12 +82,21 @@ float Noise2D(float x, float y) {
 
 float valueNoise2D(float x, float y) {
 
-  // set seed in the function initializing trrain
+  int X0 = (int)floor(x) & 255;
+  int Y0 = (int)floor(y) & 255;
+  int X1 = (X0 + 1) & 255;
+  int Y1 = (Y0 + 1) & 255;
 
-  float bottomLeft = drand48();
-  float bottomRight = drand48();
-  float topLeft = drand48();
-  float topRight = drand48();
+  float xf = x - X0;
+  float yf = y - Y0;
 
-  return (float)NULL;
+  float bottomLeft = randMap2D[Y0][X0];
+  float bottomRight = randMap2D[Y0][X1];
+  float topLeft = randMap2D[Y1][X0];
+  float topRight = randMap2D[Y1][X1];
+
+  double u = fade(xf);
+  double v = fade(yf);
+
+  return lerp(u, lerp(v, bottomLeft, topLeft), lerp(v, bottomRight, topRight));
 }

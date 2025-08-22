@@ -41,6 +41,10 @@ public:
                                float maxHeight, float scalingFactor,
                                unsigned int numOctaves, GLuint shaderProgram);
 
+  void fBmUsingValueNoise(unsigned int m_terrainSize, float minHeight,
+                          float maxHeight, float scalingFactor,
+                          unsigned int numOctaves, GLuint shaderProgram);
+
   void ToggleWireframe(GLFWwindow *window);
   void RenderTerrain(GLenum mode);
   void Delete();
