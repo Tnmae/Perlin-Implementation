@@ -17,8 +17,8 @@ namespace fs = std::filesystem;
 void *loadTerrainData(std::string file_name);
 
 namespace Filter {
-void ApplyFIRSinglePoint(float *array2D, int terrain_size, int x, int z,
-                         float &prevVal, double Filter);
+void ApplyFIRSinglePoint(float *array2D, unsigned int terrain_size, int x,
+                         int z, float &prevVal, double Filter);
 void FIRFilter(float *array2D, int terrain_size, double Filter);
 }; // namespace Filter
 
@@ -28,18 +28,18 @@ public:
   float m_minHeight;
   void InitTerrain(std::string file_name, GLuint shaderProgram,
                    float scalingFactor);
-  void FaultFormationTechnique(int terrain_size, int Iterations,
-                               float minHeight, float maxHeight,
-                               float scalingFactor, GLuint shaderProgram,
-                               double Filter);
-  void MidpointDisplacementTechnique(int terrain_size, double roughness,
-                                     float minHeight, float maxHeight,
-                                     float scalingFactor, double Filter,
-                                     GLuint shaderProgram);
-
-  void FractalPerlinGeneration(int m_terrainSize, float minHeight,
+  void FaultFormationTechnique(unsigned int terrain_size,
+                               unsigned int Iterations, float minHeight,
                                float maxHeight, float scalingFactor,
-                               int numOctaves, GLuint shaderProgram);
+                               GLuint shaderProgram, double Filter);
+  void MidpointDisplacementTechnique(unsigned int terrain_size,
+                                     double roughness, float minHeight,
+                                     float maxHeight, float scalingFactor,
+                                     double Filter, GLuint shaderProgram);
+
+  void FractalPerlinGeneration(unsigned int m_terrainSize, float minHeight,
+                               float maxHeight, float scalingFactor,
+                               unsigned int numOctaves, GLuint shaderProgram);
 
   void ToggleWireframe(GLFWwindow *window);
   void RenderTerrain(GLenum mode);

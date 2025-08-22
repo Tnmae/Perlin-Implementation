@@ -32,4 +32,6 @@ inline double lerp(float t, float u, float v) { return u + t * (v - u); }
 
 float Noise2D(float x, float y);
 
+float valueNoise2D(float x, float y);
+
 #endif /*NOISE_HPP*/

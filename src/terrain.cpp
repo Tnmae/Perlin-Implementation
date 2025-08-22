@@ -38,8 +38,8 @@ void *loadTerrainData(std::string file_name, size_t &out_size) {
   return p;
 }
 
-void Filter::ApplyFIRSinglePoint(float *array2D, int terrain_size, int x, int z,
-                                 float &prevVal, double Filter) {
+void Filter::ApplyFIRSinglePoint(float *array2D, unsigned int terrain_size,
+                                 int x, int z, float &prevVal, double Filter) {
   int curIdx = z * terrain_size + x;
   *(array2D + curIdx) = prevVal * Filter + (1.0 - Filter) * *(array2D + curIdx);
   prevVal = *(array2D + curIdx);
@@ -109,10 +109,10 @@ void Terrain::InitTerrain(std::string file_name, GLuint shaderProgram,
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
-                                      float minHeight, float maxHeight,
-                                      float scalingFactor, GLuint shaderProgram,
-                                      double Filter) {
+void Terrain::FaultFormationTechnique(unsigned int terrain_size,
+                                      unsigned int Iteration, float minHeight,
+                                      float maxHeight, float scalingFactor,
+                                      GLuint shaderProgram, double Filter) {
   Terrain::terrain_size = terrain_size;
   Terrain::m_worldScale = scalingFactor;
   Terrain::m_maxHeight = maxHeight;
@@ -120,9 +120,10 @@ void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
 
   float delta_height = maxHeight - minHeight;
 
-  float array2D[terrain_size][terrain_size];
+  Terrain::array2D =
+      (float *)malloc(terrain_size * terrain_size * sizeof(float));
 
-  Utility::initArray2D(&array2D[0][0], terrain_size);
+  Utility::initArray2D(Terrain::array2D, terrain_size);
 
   for (int cur_iter = 0; cur_iter < Iteration; cur_iter++) {
     float iteration_ratio = ((float)cur_iter / (float)Iteration);
@@ -157,21 +158,19 @@ void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
         int cross_product = dirX_in * dirZ - dirX * dirZ_in;
 
         if (cross_product > 0) {
-          array2D[i][j] += height;
+          *(Terrain::array2D + i * terrain_size + j) += height;
         }
       }
     }
   }
 
   float min, max;
-  Utility::getMinMaxValue(&array2D[0][0], terrain_size, min, max);
+  Utility::getMinMaxValue(Terrain::array2D, terrain_size, min, max);
 
-  Utility::Normalize(&array2D[0][0], terrain_size, min, max, minHeight,
+  Utility::Normalize(Terrain::array2D, terrain_size, min, max, minHeight,
                      maxHeight);
 
-  Filter::FIRFilter(&array2D[0][0], terrain_size, Filter);
-
-  Terrain::array2D = &array2D[0][0];
+  Filter::FIRFilter(Terrain::array2D, terrain_size, Filter);
 
   std::vector<Vertex> vertices;
   std::vector<GLuint> indices;
@@ -181,8 +180,9 @@ void Terrain::FaultFormationTechnique(int terrain_size, int Iteration,
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::MidpointDisplacementTechnique(int terrain_size, double roughness,
-                                            float minHeight, float maxHeight,
+void Terrain::MidpointDisplacementTechnique(unsigned int terrain_size,
+                                            double roughness, float minHeight,
+                                            float maxHeight,
                                             float scalingFactor, double Filter,
                                             GLuint shaderProgram) {
   Terrain::terrain_size = terrain_size;
@@ -194,27 +194,26 @@ void Terrain::MidpointDisplacementTechnique(int terrain_size, double roughness,
   float m_heightReduce = std::pow(2.0f, -roughness);
   int curHeight = (float)m_rectSize / 2.0f;
 
-  float array2D[terrain_size][terrain_size];
+  Terrain::array2D =
+      (float *)malloc(terrain_size * terrain_size * sizeof(float));
 
-  Utility::initArray2D(&array2D[0][0], terrain_size);
+  Utility::initArray2D(Terrain::array2D, terrain_size);
 
   while (m_rectSize > 0) {
 
-    Utility::diamondStep(&array2D[0][0], terrain_size, m_rectSize, curHeight);
+    Utility::diamondStep(Terrain::array2D, terrain_size, m_rectSize, curHeight);
 
-    Utility::squareStep(&array2D[0][0], terrain_size, m_rectSize, curHeight);
+    Utility::squareStep(Terrain::array2D, terrain_size, m_rectSize, curHeight);
 
     m_rectSize >>= 1;
     curHeight *= m_heightReduce;
   }
 
   float min, max;
-  Utility::getMinMaxValue(&array2D[0][0], terrain_size, min, max);
+  Utility::getMinMaxValue(Terrain::array2D, terrain_size, min, max);
 
-  Utility::Normalize(&array2D[0][0], terrain_size, min, max, minHeight,
+  Utility::Normalize(Terrain::array2D, terrain_size, min, max, minHeight,
                      maxHeight);
-
-  Terrain::array2D = &array2D[0][0];
 
   Filter::FIRFilter(Terrain::array2D, terrain_size, Filter);
 
@@ -227,9 +226,11 @@ void Terrain::MidpointDisplacementTechnique(int terrain_size, double roughness,
   terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
 
-void Terrain::FractalPerlinGeneration(int m_terrainSize, float minHeight,
-                                      float maxHeight, float scalingFactor,
-                                      int numOctaves, GLuint shaderProgram) {
+void Terrain::FractalPerlinGeneration(unsigned int m_terrainSize,
+                                      float minHeight, float maxHeight,
+                                      float scalingFactor,
+                                      unsigned int numOctaves,
+                                      GLuint shaderProgram) {
   Terrain::terrain_size = m_terrainSize;
   Terrain::m_minHeight = minHeight;
   Terrain::m_maxHeight = maxHeight;
@@ -237,9 +238,10 @@ void Terrain::FractalPerlinGeneration(int m_terrainSize, float minHeight,
 
   makePermutation();
 
-  float array2D[m_terrainSize][m_terrainSize];
+  Terrain::array2D =
+      (float *)malloc(m_terrainSize * m_terrainSize * sizeof(float));
 
-  Utility::initArray2D(&array2D[0][0], m_terrainSize);
+  Utility::initArray2D(Terrain::array2D, m_terrainSize);
 
   float delta_height = maxHeight - minHeight;
 
@@ -252,7 +254,7 @@ void Terrain::FractalPerlinGeneration(int m_terrainSize, float minHeight,
       float x = i * frequency;
       for (int j = 0; j < m_terrainSize; j++) {
         float y = j * frequency;
-        array2D[i][j] +=
+        *(array2D + i * m_terrainSize + j) +=
             delta_height * amplitude * ((float)(1.0f + Noise2D(x, y)) / 2.0f) +
             minHeight;
       }
@@ -264,12 +266,10 @@ void Terrain::FractalPerlinGeneration(int m_terrainSize, float minHeight,
 
   float min, max;
 
-  Utility::getMinMaxValue(&array2D[0][0], terrain_size, min, max);
+  Utility::getMinMaxValue(Terrain::array2D, terrain_size, min, max);
 
-  Utility::Normalize(&array2D[0][0], m_terrainSize, min, max, minHeight,
+  Utility::Normalize(Terrain::array2D, m_terrainSize, min, max, minHeight,
                      maxHeight);
-
-  Terrain::array2D = &array2D[0][0];
 
   std::vector<Vertex> vertices;
   std::vector<GLuint> indices;

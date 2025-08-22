@@ -41,6 +41,7 @@ vector2D getConstantVector(int valueFromPerm) {
 }
 
 float Noise2D(float x, float y) {
+
   int X = ((int)floor(x)) & 255;
   int Y = ((int)floor(y)) & 255;
 
@@ -69,4 +70,14 @@ float Noise2D(float x, float y) {
                lerp(v, dotBottomRight, dotTopRight)));
 }
 
-float valueNoise2D(float x, float y) { return 0.0f; }
+float valueNoise2D(float x, float y) {
+
+  // set seed in the function initializing trrain
+
+  float bottomLeft = drand48();
+  float bottomRight = drand48();
+  float topLeft = drand48();
+  float topRight = drand48();
+
+  return (float)NULL;
+}
