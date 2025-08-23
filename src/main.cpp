@@ -70,8 +70,8 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.FractalPerlinGeneration(1500, 0.0f, 300.0f, 1.0f, 8,
-                                     terrainShader.shaderProgram);
+  newTerrain.FaultFormationTechnique(1500, 500, 0.0f, 500.0f, 1.0f,
+                                     terrainShader.shaderProgram, 0.3f);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

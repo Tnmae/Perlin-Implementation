@@ -91,3 +91,27 @@ cd Perlin-Implementation
 - **Q** - for switching between wireframe and fill mode.
 
 ## 📸 Preview
+
+### Midpoint Displacement
+
+![Midpoint Displacement](images/MidPointDis.png)
+Terrain Size = 2048, Roughness = 1.2f, Filter = 0.3f, minHeight = 0.0f, maxHeight = 300.0f, scalingFactor= 1.0f
+
+### Fault Formation
+
+![Fault Formation](images/FaultFormation.png)
+Terrain Size = 1500, Iterations = 500, Filter = 0.3f, minHeight = 0.0f, maxHeight = 300.0f, scalingFactor= 1.0f
+
+### Fractal Perlin Noise
+
+![Fractal Perlin Noise](images/FractalPerlin.png)
+Terrain Size = 1500, Octaves = 8, minHeight = 0.0f, maxHeight = 300.0f, scalingFactor= 1.0f
+
+### fBm with Value Noise
+
+![fBm Value Noise](images/fbmUsingValueNoise.png)
+Terrain Size = 1500, Octaves = 8, minHeight = 0.0f, maxHeight = 300.0f, scalingFactor= 1.0f
+
+## 📝 License
+
+MIT License – free to use, modify, and distribute.
