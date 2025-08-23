@@ -87,16 +87,16 @@ float valueNoise2D(float x, float y) {
   int X1 = (X0 + 1) & 255;
   int Y1 = (Y0 + 1) & 255;
 
-  float xf = x - X0;
-  float yf = y - Y0;
+  float xf = x - floor(x);
+  float yf = y - floor(y);
 
   float bottomLeft = randMap2D[Y0][X0];
   float bottomRight = randMap2D[Y0][X1];
   float topLeft = randMap2D[Y1][X0];
   float topRight = randMap2D[Y1][X1];
 
-  double u = fade(xf);
-  double v = fade(yf);
+  float u = fade(xf);
+  float v = fade(yf);
 
-  return lerp(u, lerp(v, bottomLeft, topLeft), lerp(v, bottomRight, topRight));
+  return lerp(v, lerp(u, bottomLeft, bottomRight), lerp(u, topLeft, topRight));
 }

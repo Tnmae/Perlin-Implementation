@@ -1,6 +1,4 @@
 #include "../include/terrain.hpp"
-#include <glm/integer.hpp>
-#include <thread>
 
 void *loadTerrainData(std::string file_name, size_t &out_size) {
   std::string current_path = fs::current_path().string();
@@ -307,7 +305,7 @@ void Terrain::fBmUsingValueNoise(unsigned int m_terrainSize, float minHeight,
       for (int j = 0; j < m_terrainSize; j++) {
         float y = j * frequency;
         *(array2D + i * m_terrainSize + j) +=
-            delta_height * amplitude * ((valueNoise2D(x, y) * 2) - 1.0f);
+            delta_height * amplitude * valueNoise2D(x, y);
       }
     }
     amplitude *= 0.5f;
@@ -330,6 +328,7 @@ void Terrain::fBmUsingValueNoise(unsigned int m_terrainSize, float minHeight,
 
   Terrain::terrain_mesh = new Mesh(vertices, indices, {}, shaderProgram);
 }
+
 void Terrain::Delete() { terrain_mesh->Delete(); }
 
 void Terrain::RenderTerrain(GLenum mode) {
