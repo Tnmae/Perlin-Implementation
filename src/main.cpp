@@ -70,8 +70,8 @@ int main() {
   // newTerrain.InitTerrain("heightmap.save",
   // terrainShader.shaderProgram, 4.0f);
 
-  newTerrain.FaultFormationTechnique(1500, 500, 0.0f, 500.0f, 1.0f,
-                                     terrainShader.shaderProgram, 0.3f);
+  newTerrain.fBmUsingValueNoise(1500, 0.0f, 400.0f, 1.0f, 10,
+                                terrainShader.shaderProgram);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

@@ -112,6 +112,13 @@ Terrain Size = 1500, Octaves = 8, minHeight = 0.0f, maxHeight = 300.0f, scalingF
 ![fBm Value Noise](images/fbmUsingValueNoise.png)
 Terrain Size = 1500, Octaves = 8, minHeight = 0.0f, maxHeight = 300.0f, scalingFactor= 1.0f
 
+## Reference Material
+
+- https://adrianb.io/2014/08/09/perlinnoise.html
+- https://digitalfreepen.com/2017/06/20/range-perlin-noise.html
+- https://rtouti.github.io/graphics/perlin-noise-algorithm
+- https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/procedural-patterns-noise-part-1/creating-simple-2D-noise.html
+
 ## 📝 License
 
 MIT License – free to use, modify, and distribute.
